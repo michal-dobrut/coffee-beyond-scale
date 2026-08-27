@@ -1,0 +1,36 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+
+# --- Testing / tooling caches ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Notebooks ---
+.ipynb_checkpoints/
+
+# --- Project data & artifacts ---
+# Photos and trained weights are not committed; sessions are tracked via the
+# manifest instead. See the storage section of docs/data.md. Ignoring the
+# contents of data/ rather than the directory is what lets the manifest be
+# re-included below -- a negation cannot reach inside an excluded directory.
+data/*
+!data/manifest.csv
+models/
+
+# --- OS cruft ---
+.DS_Store
+Thumbs.db
+
+# --- Private notes: discussion, session logs, plans (own nested git repo) ---
+notes/

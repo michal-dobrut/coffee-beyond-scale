@@ -37,3 +37,47 @@ in `notes/` — that is the signal the split sits in the wrong place, not a lice
 to cite it. Or new material keeps landing in whichever of the three `docs/` files
 was open at the time, which would mean the seams do not fall where readers'
 questions divide.
+
+### 2026-08-27 — Pixel 10 Pro as the primary capture device
+
+**Decision:** Routine sessions are shot on a Pixel 10 Pro, main lens, under the
+capture protocol in `docs/data.md`. It is the primary device rather than the
+only one — the set-aside evaluation group still requires a second camera body.
+
+**Why:** It is the camera already owned, so standardising on it costs nothing.
+
+**Revisit if:** The device cannot be held to the capture protocol — exposure
+merging or per-region tone mapping that cannot be disabled, or white balance and
+exposure that cannot be locked — which would break the uniform white reference
+that roast estimation depends on. Or its EXIF does not carry a focal length that
+the height correction can use.
+
+### 2026-08-27 — Markers set in from the sheet edge
+
+**Decision:** The marker border is printed inside the A4 margin with a rim of
+unmarked white paper left between the outer marker row and the sheet edge, so no
+marker touches or approaches the paper boundary. Corner detection against the
+plain sheet remains the primary route; the markers are read independently.
+
+**Why:** High-contrast ink adjacent to the paper boundary changes the boundary
+itself — it shifts a global threshold computed over the frame, and gives
+edge-linking a straighter, higher-contrast line to lock onto than paper against
+table. The rim keeps the markers from altering the one edge the plain-sheet
+detector exists to find, which is what lets the markers measure that detector
+rather than flatter it.
+
+**Rejected:**
+- A blank sheet with no markers — pose would be assumed rather than measured,
+  and the asymmetry is one-way for captured data: markers can be masked out of a
+  photograph afterwards, but cannot be added to one without re-shooting.
+- Markers flush to the sheet edge, maximising the marker field — puts ink
+  against the paper boundary and contaminates the measurement the markers are
+  there to make.
+- Markers as the primary detector, plain-sheet detection dropped — the whole
+  point of this project is to do it with minimal prep.
+
+**Revisit if:** Paired frames of a blank sheet, shot in the same session under
+the same lighting, show the plain-sheet detector materially worse without the
+markers present — the corner-detection error then describes the marker sheet and
+not a blank one. Or the bean field left inside the border is too small for the
+bean count where merging begins to dominate.

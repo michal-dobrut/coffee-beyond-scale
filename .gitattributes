@@ -1,0 +1,5 @@
+# The repository stores text as LF; a Windows working tree may still be CRLF.
+* text=auto
+
+# Scripts run on Linux runners, where a CRLF shebang is an unreadable failure.
+*.sh text eol=lf

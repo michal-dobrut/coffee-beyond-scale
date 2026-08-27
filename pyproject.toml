@@ -5,9 +5,8 @@ description = "Estimate coffee bean mass from a single photo, with quantified un
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "numpy",
-    "opencv-python",
+    "opencv-python-headless",
     "scikit-image",
-    "matplotlib",
     "pandas",
 ]
 
@@ -16,6 +15,8 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pytest",
+    "jupyterlab",
+    "matplotlib",
 ]
 
 [build-system]

@@ -29,11 +29,23 @@ order. A campaign is named for what it is, never numbered.
 When a topic concludes, remind me to run `/dump` before the conversation gets
 long enough to be compacted.
 
-## Organise by what a thing is, never by when it was done
+## Organise by what a thing is, not by when it was done
 
-No "week 1", "phase 2", "next sprint", "for now" in tracked files — not in
-filenames, headings, docstrings, comments, or TODOs. A reader in month six does
-not know what week 1 was and cannot tell whether it is still week 1.
+Sequence is fine where the sequence belongs to the thing: the steps of a
+protocol, the stages of a derivation, anything a reader has to follow in order.
+Numbering those is the content, not a schedule leaking in.
+
+The schedule is what stays out. No "week 1", "phase 2", "next sprint", "for
+now" in tracked files — not in filenames, headings, docstrings, comments, or
+TODOs. A reader in month six does not know what week 1 was and cannot tell
+whether it is still week 1. Campaigns and directories are named for what they
+are rather than numbered, because their order is a dependency, and dependencies
+get reordered.
+
+Dates are narrower still. One that records when something happened is a fact
+and keeps: a decision entry, a roast date, a session. One that stands in for
+the current state of something rots as soon as the state moves — write the
+state instead.
 
 ## DECISIONS.md
 

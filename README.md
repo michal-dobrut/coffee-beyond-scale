@@ -2,38 +2,50 @@
 
 Every brewing method starts with "Weigh X g of coffee beans..." but what if you left your digital scale at home? As usual, math to the rescue!
 
-There are big and small beans. But _on average_, an example roasted Arabica bean weighs 0.145 g with a standard deviation of 0.022 g.
+There are big beans and small beans. Round and flat ones. But _on average_, an example roasted Arabica bean weighs 0.145 g with a standard deviation of 0.022 g. That means 125 beans go into the basket.
 
-We are measuring a dose of 100 beans.
+> Just count them? It cannot be true!
+
+Well, standard deviation of sum of individual bean masses is as follows
 
 $SD_{sum} = SD \cdot \sqrt{n}$
 
-so its standard deviation is only 10x bigger (0.22 g) than that of a single bean. Or, with 95% probability, you'll have 14.5 g $\pm$ 0.43 g by just counting beans. That's only 3% error - enough for a tasty espresso!*
+Mass grown 125x but its spread only 11x. Or, with 95% probability, you'll get your 18 g $\pm$ 0.5 g by just counting beans. That's only 3% error - should be enough for a tasty espresso in a crunch!
 
-*What if you haven't measured SD of your beans? Well, I'll predict it!
+> But what if I don't weigh every coffee bean I own? 
 
-## Approach(es)
+Well, read on...
 
-First, spread your beans over a white paper sheet of known size, A4 (ISO 216) for starters. Take a photo and process with a pipeline of choice. Each begins with unwarping of perspective based on paper edges, but what happens next... here I am to find out!
+## Reading more of the photograph
 
-### Coffee-Coloured Area
+Spread the beans on a sheet of paper of known size, take one photo. What happens next is a ladder — each rung reads more of the same picture and assumes less of it:
 
-Easiest way first - count coffee-brown pixels and multiply by the area-to-weight ratio.
+- **How many beans there are.** The 3% above. Still needs a mean bean mass from
+  somewhere.
+- **How much of the sheet is brown.** Cheap, and it quietly assumes your beans
+  are the size mine were.
+- **Every bean's outline.** The size distribution stops being an assumption and
+  becomes a measurement. Done classically, and with a trained segmenter, so I
+  can celebrate being 0.4% better than the classical one.
+- **What each bean looks like.** Roast and variety move bean density by a fifth,
+  and it's written on the bean. Not read yet.
 
-### Classic Segmentation
+Every new step is benchmarked against the previous one. Is it worth climbing to the top?
 
-Apply classic image operations until we can count individual beans reliably. Then multiply by average bean weight.
+## Taking the error seriously
 
-### YOLO
+I wouldn't be myself if I gave you a number without accurate and honest error bars.
 
-Neural nets are still hot, so I'm not skipping this. Steps are:
-1. collect enough data
-2. annotate
-3. train
-4. celebrate being 0.4% better than classical methods
+So bias is reported apart from scatter — a method that's accurate on average
+because two large biases cancel is not accurate. And every campaign writes its
+error budget before it has data, then publishes the comparison.
 
-## Side-Track Experiments
+## Three campaigns
 
-I'll start with the same jar of coffee for pipeline validation. But for the method to be usable, some calibration against roast level and bean size will increase precision to a usable state.
+- [**first light**](docs/experiments/first-light/) — one bag, from photo to final number. Test equipment and processing pipeline. Get hands dirty (or hopefully not too much in this case); discover what's not foreseen.
+- [**beanometry**](docs/experiments/#beanometry) — many beans, better optics; the analytical stage. Fitted constant taken apart into the physics it absorbed: shape, rest pose, density against roast, camera angle.
+- [**field campaign**](docs/experiments/#field-campaign) — other people's beans, random camera angles, kitchen scales. Machine learning coffee. Improves accuracy for everyone but me.
 
-Also, there is useful information in the camera's focal length and angle towards the surface - yup, I haven't missed it, patience advised!
+## Results
+
+First light soon to be seen here!

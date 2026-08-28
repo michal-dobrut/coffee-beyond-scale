@@ -16,10 +16,15 @@ ever mentions `notes/`.** Tooling config is exempt; it is not part of the story
 the repo tells. Such a file may cite another tracked file, by concept — never
 by section number, which rots on the next edit to that document.
 
-Method documentation lives in `docs/`, split by the reader's question:
-`method.md` (why mass is recoverable from a photo), `uncertainty.md` (the error
-budget and interval calibration), `data.md` (capture protocol, ground truth,
-evaluation split).
+Documentation lives in `docs/`, split by what outlives a single experiment.
+The root holds `method.md` (why mass is recoverable from a photo, and the
+vocabulary for what a measurement is worth) and `records.md` (what is kept,
+what is committed). `docs/knowledge/` holds background on instruments and the
+surrounding field.
+
+`docs/experiments/` holds one directory per measurement campaign, each owning
+its own protocol, bench, analysis and error budget, indexed in dependency
+order. A campaign is named for what it is, never numbered.
 
 When a topic concludes, remind me to run `/dump` before the conversation gets
 long enough to be compacted.

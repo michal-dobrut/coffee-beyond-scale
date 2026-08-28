@@ -81,3 +81,44 @@ the same lighting, show the plain-sheet detector materially worse without the
 markers present — the corner-detection error then describes the marker sheet and
 not a blank one. Or the bean field left inside the border is too small for the
 bean count where merging begins to dominate.
+
+### 2026-08-28 — Documentation organised by campaign
+
+**Supersedes:** 2026-08-27 — Reader-facing repo, private deliberation
+
+**Decision:** Documentation is organised by measurement campaign.
+`docs/experiments/` holds one directory per campaign — `first-light`,
+`beanometry`, `field-campaign` — each owning its own protocol, bench, analysis
+and error budget, with an index carrying the dependency order and what each
+campaign consumes from the one before. The root keeps only what outlives any
+single campaign: `method.md`, the physics and the vocabulary for what a
+measurement is worth, absorbing the former `uncertainty.md`; and `records.md`,
+formerly `data.md`, narrowed to what is kept and what is committed. The
+`notes/` arrangement is unchanged.
+
+**Why:** The project resolved into three campaigns with different benches,
+different questions and different error budgets, and a single document
+describing "the" capture protocol or "the" error budget can only ever be right
+about one of them.
+
+**Rejected:**
+- The three-way root split kept as it was — capture protocol, ground truth and
+  evaluation split are per-campaign, so the files holding them were correct for
+  at most one campaign at a time.
+- Merging the root into one document — record-keeping conventions are
+  housekeeping and drag the tone of the physics down; twenty-nine lines
+  standing apart is not scaffolding.
+- `uncertainty.md` kept separate — it existed because the uncertainty treatment
+  is the project's claim to attention and gets buried inside a general design
+  document. Each campaign now publishes an error budget written before its
+  data, which signals that far better than a document explaining that one
+  would.
+- Numbered or stage-prefixed directories, `01-first-light` or
+  `stage-1-first-light` — the names already carry the order, since first light
+  is first by definition of the term, and digits rot the moment a campaign is
+  inserted, split or reordered, taking every path that cited them with it.
+
+**Revisit if:** A campaign's error budget starts restating the framework in
+`method.md` instead of instantiating it for its own bench — the seam is then in
+the wrong place. Or two campaigns share enough of a bench that both
+descriptions of it drift.

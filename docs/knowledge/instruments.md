@@ -91,19 +91,20 @@ distortion and its own intrinsics.
 | `resolution_mp` | 50 | 48 |
 | sensor format | 1/1.31" | 1/2.55" |
 | `pixel_pitch_um` | 1.2 | 0.7 `[?]` |
-| `aperture_f` | 1.68–1.7 `[!]` | 2.8 |
-| `f_equiv_mm` | 24–25 `[!]` | 113 or 128 `[!]` |
-| `f_actual_mm` | 7.1 `[?]` | 16–18 `[?]` |
+| `aperture_f` | 1.68 | 2.8 |
+| `f_equiv_mm` | 24.4 `[?]` | 113 or 128 `[!]` |
+| `f_actual_mm` | 6.90 | 16–18 `[?]` |
 | stabilisation | OIS | OIS |
 | autofocus | dual-pixel PDAF + laser | dual-pixel PDAF |
 | `focus_range_mm` | 100–∞ | ~300–∞ `[?]` |
 | quad-Bayer binning | yes, to 12.5 MP | yes `[?]` |
 | full-resolution capture | yes, Hi-Res setting | yes |
 
-Neither actual focal length is published; both are derived from sensor geometry
-and the equivalent figure, and both inherit that figure's uncertainty. The
-sensor and lens part numbers are not disclosed by the manufacturer, and vendor
-claims about them are uncorroborated.
+The manufacturer publishes neither actual focal length. The main camera's is
+taken from what its own firmware writes into every frame; the telephoto's is
+derived from sensor geometry and the equivalent figure and inherits that
+figure's uncertainty. The sensor and lens part numbers are not disclosed, and
+vendor claims about them are uncorroborated.
 
 ### Disagreements to be aware of
 
@@ -119,8 +120,16 @@ than stated. The 12% gap propagates into `f_actual_mm` and therefore into any
 height correction that uses it. The main camera has no such problem: 50 MP at
 1.2 µm gives a 12.24 mm diagonal against 12.21 mm implied by 1/1.31".
 
-**Main equivalent focal length** is quoted as both 24 mm and 25 mm. The
-geometry below uses 25 mm.
+**Main focal length.** The 24 mm and 25 mm figures are two roundings of one
+lens rather than a disagreement about it. The camera reports an actual focal
+length of 6.90 mm, which against the 12.24 mm sensor diagonal above gives a
+crop factor of 3.53 and an equivalent of 24.4 mm; the integer EXIF field renders
+that as 24, and a 25 mm citation implies 7.08 mm actual. The geometry below
+uses 24.4 mm. Calibration against the board still supersedes it.
+
+**Main aperture** is not in dispute either. The JPEG reports f/1.68 and the
+DNG f/1.7 for the same exposure, which is one lens written at two
+precisions.
 
 ### Capture settings
 
@@ -141,6 +150,33 @@ restricted to the main sensor in third-party applications on this manufacturer's
 phones; whether that still holds is `[measure]`, and if it does, the telephoto
 cannot serve any role that depends on linear sensor data.
 
+### Raw and JPEG are not the same frame
+
+A raw and JPEG pair shares a capture but not a coordinate system, so a position
+measured in one does not carry to the other.
+
+- **Orientation.** The DNG holds the sensor-native landscape plane and records
+  the rotation in its orientation tag. The JPEG arrives already rotated and
+  tagged upright. The pair therefore disagrees whenever the phone was not held
+  in landscape.
+- **Dimensions.** The raw plane, the DNG's default crop and the JPEG are three
+  different sizes, and the ratio between the last two is not the same on both
+  axes, so no single scale factor relates them.
+- **Timestamps.** `DateTimeOriginal` is written to whole seconds and the two
+  containers round it independently, so a pair can disagree by a second. The
+  filename stem is the reliable join.
+
+Exposure merging leaves the raw usable even though the capture settings above
+exclude it. The merged DNG is still linear, carrying black and white levels, a
+per-shot noise profile, and the brightness push recorded as `BaselineExposure`
+rather than applied to the data. Exposure time is identical across the pair and
+only the reported sensitivity differs, by that push. What merging damages is
+the JPEG, whose per-region tone mapping is the reason for the exclusion.
+
+White balance is recorded as `AsShotWhiteXY`, the chromaticity of the estimated
+illuminant, where the specification's more usual choice is `AsShotNeutral`.
+A reader expecting the latter finds nothing.
+
 ## Geometry that follows
 
 For a board of width `board_mm` filling the frame's long side, working distance
@@ -153,9 +189,9 @@ px_per_mm   = pixels_long_side / board_mm
 
 | board | camera | `distance_mm` | `px_per_mm` |
 | --- | --- | --- | --- |
-| A4, 297 mm | main | 206 | 27.5 |
+| A4, 297 mm | main | 201 | 27.5 |
 | A4, 297 mm | tele | 932 | 26.9 |
-| 150 mm | main | 104 | 54.4 |
+| 150 mm | main | 102 | 54.4 |
 | 150 mm | tele | 471 | 53.3 |
 
 Two of these are impractical. The main camera on a 150 mm board sits at its
@@ -174,7 +210,7 @@ theta_corner_deg = atan(22.5 / f_equiv_mm)
 
 | `f_equiv_mm` | `theta_corner_deg` |
 | --- | --- |
-| 25 | 42.0 |
+| 24.4 | 42.7 |
 | 113 | 11.3 |
 | 128 | 10.0 |
 
@@ -195,9 +231,9 @@ dof_mm = 2 * N * c * (distance_mm / f_actual_mm)^2
 
 | board | camera | `dof_mm` `[?]` |
 | --- | --- | --- |
-| A4 | main | 6.8 |
+| A4 | main | 6.9 |
 | A4 | tele | 22 |
-| 150 mm | main | 1.7 |
+| 150 mm | main | 1.8 |
 | 150 mm | tele | 5.6 |
 
 All are derived through `f_actual_mm`, so the telephoto rows carry that
@@ -244,13 +280,15 @@ and it feeds every area estimate.
 - `[measure]` The balance's actual serial settings.
 - `[measure]` Whether raw capture is available from the telephoto.
 - `[measure]` Real resolution of both cameras by slanted edge.
-- `[measure]` Both equivalent focal lengths, by calibration against the board,
-  which settles the 113/128 mm disagreement and the derived actual focal
-  lengths with it.
+- `[measure]` The telephoto's equivalent focal length, by calibration against
+  the board, which settles the 113/128 mm disagreement and its derived actual
+  focal length with it. The main camera's is fixed to a rounding by its own
+  firmware, and calibration would still supersede that.
 
 ## Sources
 
 Manufacturer product pages and the MT-SICS reference manual for the balance;
 GSMArena and DXOMARK for the camera, which is where the disagreements noted
-above originate. The manufacturer does not publish actual focal lengths, sensor
+above originate. Figures attributed to firmware are read from the EXIF the
+phone writes into full-resolution raw and JPEG. The manufacturer does not publish actual focal lengths, sensor
 part numbers, or pixel dimensions for either camera.

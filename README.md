@@ -40,12 +40,15 @@ So bias is reported apart from scatter — a method that's accurate on average
 because two large biases cancel is not accurate. And every campaign writes its
 error budget before it has data, then publishes the comparison.
 
-## Three campaigns
+## Four campaigns
 
+- [**shakedown**](docs/experiments/shakedown/) — the chain run once before the bench exists, to find out what the bench has to be. Measures my table and my hands, not the coffee.
 - [**first light**](docs/experiments/first-light/) — one bag, from photo to final number. Test equipment and processing pipeline. Get hands dirty (or hopefully not too much in this case); discover what's not foreseen.
 - [**beanometry**](docs/experiments/#beanometry) — many beans, better optics; the analytical stage. Fitted constant taken apart into the physics it absorbed: shape, rest pose, density against roast, camera angle.
 - [**field campaign**](docs/experiments/#field-campaign) — other people's beans, random camera angles, kitchen scales. Machine learning coffee. Improves accuracy for everyone but me.
 
 ## Results
+
+- [**shakedown**](docs/reports/2026-08-29-run-zero-shakedown.md) — where the error actually lives. Half of it is the millimetre at a bean's edge, and the 50 MP sensor buys nothing at all.
 
 First light soon to be seen here!

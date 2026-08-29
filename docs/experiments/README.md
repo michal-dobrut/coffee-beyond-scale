@@ -8,14 +8,24 @@ restated.
 They are listed in dependency order. Each consumes the one above it, and
 results from one reshape the design of the next.
 
+## shakedown
+
+What does the bench have to be? The chain run once on real photographs, before
+there is a protocol to run it against, so that the error can be ranked before
+anything is built to hold it. Measures the instrument, not the coffee.
+
+Consumes nothing. Produces the ranked error budget the other campaigns are
+designed against, and the requirements a bench has to meet to beat it.
+
 ## first-light
 
 Does the whole chain run end to end, and what does it cost? One bag, one
 bench, beans placed so that none touch. Fits a single constant relating
 projected area to mass and measures the error that remains.
 
-Consumes nothing. Produces the constant, the scatter of mass about the area
-relation, and a labelled lot of individually weighed beans.
+Consumes the shakedown's bench requirements and its account of which terms
+dominate. Produces the constant, the scatter of mass about the area relation,
+and a labelled lot of individually weighed beans.
 
 ## beanometry
 

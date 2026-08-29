@@ -122,3 +122,30 @@ about one of them.
 `method.md` instead of instantiating it for its own bench — the seam is then in
 the wrong place. Or two campaigns share enough of a bench that both
 descriptions of it drift.
+
+
+### 2026-08-29 — Living documents instead of a decision register
+
+**Supersedes:** 2026-08-27 — Reader-facing repo, private deliberation, in the
+part that made this log one of the reader-facing documents.
+
+**Decision:** This log is removed. What was chosen, and why, is carried by the
+documents that describe the current approach and methodology — `method.md`,
+`records.md`, the campaign documents, `CLAUDE.md` — each stating what is true
+now rather than accumulating what was true when.
+
+**Why:** One person, over a short horizon, with session dumps already holding
+the deliberation. A register earns its keep when a choice must be defended to
+someone who was not in the room, or recovered long after everyone has forgotten
+it; neither applies here, while the discipline it asks for is paid every time
+something is decided.
+
+**Rejected:**
+- Keeping the log, the only alternative in play — it costs an entry per decision
+  and the care to supersede rather than edit, and returns an audit trail with no
+  audience. The rename of `first-light` is the example: three entries now name a
+  directory that does not exist, and correcting them means appending a fifth
+  entry that a living document would have absorbed as a one-word edit.
+
+**Revisit if:** A second person joins, or a choice is re-litigated because the
+reasoning behind it cannot be recovered from the document that describes it.

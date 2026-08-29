@@ -180,7 +180,7 @@ the sheet edge no contrast; not dark brown, which gives it the wrong kind.*
 homography absorbs the error without complaining. This is already the dominant
 geometric term — larger than the lens, larger than corner placement — and it
 varies frame to frame, so it cannot be calibrated out either. *Fix: tape or
-clamp the sheet to something rigid and flat. The `first-light` bench document
+clamp the sheet to something rigid and flat. The `calibration` bench document
 already requires it; run zero is the measurement of what skipping it costs.*
 
 **Counting stops working before it is expected to.** At 16 g on A4 the beans are
@@ -212,7 +212,7 @@ first sixteen-gram stage and a locked 6050 K afterwards, and the paper's a*
 shifts by five units between them. It does not hurt these two pathways, because
 both normalise against the sheet. It would wreck any roast estimate, which is
 the rung where colour has to mean the same thing twice. *Fix: lock it before the
-first frame and write the value on the sheet, as the `first-light` protocol
+first frame and write the value on the sheet, as the `calibration` protocol
 already says.*
 
 **Shadows are counted as coffee.** A shadow is paper under less light, and

@@ -1,9 +1,9 @@
 # Experiments
 
 Each subdirectory is one measurement campaign: a bench, a protocol, an error
-budget written before the data, and what came out. The documents beside this
-directory hold what is true across all of them and are cited rather than
-restated.
+budget written before the data, and what came out. The shakedown is the
+exception, and its own README says why. The documents beside this directory
+hold what is true across all of them and are cited rather than restated.
 
 They are listed in dependency order. Each consumes the one above it, and
 results from one reshape the design of the next.
@@ -17,15 +17,17 @@ anything is built to hold it. Measures the instrument, not the coffee.
 Consumes nothing. Produces the ranked error budget the other campaigns are
 designed against, and the requirements a bench has to meet to beat it.
 
-## first-light
+## calibration
 
-Does the whole chain run end to end, and what does it cost? One bag, one
-bench, beans placed so that none touch. Fits a single constant relating
-projected area to mass and measures the error that remains.
+How good can this get? The bench instrumented properly and every condition
+held: one bag, every bean weighed to 0.1 mg, fixed pose, stationary light,
+beans placed so that none touch. What error survives that is the floor, and
+every later result is quoted against it. Runs beanometry's techniques at one
+bag, so a technique that fails does so cheaply.
 
 Consumes the shakedown's bench requirements and its account of which terms
-dominate. Produces the constant, the scatter of mass about the area relation,
-and a labelled lot of individually weighed beans.
+dominate. Produces the error floor, the instrument constants, and a labelled
+lot of individually weighed beans.
 
 ## beanometry
 
@@ -34,7 +36,7 @@ single fitted number apart into the physical factors it absorbed: the exponent
 measured rather than assumed, the projected-area distribution, bean shape and
 rest pose, silhouette height, density against roast level.
 
-Consumes first-light's protocol, its labelled lot, and its estimate of the
+Consumes calibration's protocol, its labelled lot, and its estimate of the
 per-bean scatter, which is what sizes the campaign.
 
 ## field-campaign

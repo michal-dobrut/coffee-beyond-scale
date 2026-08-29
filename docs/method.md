@@ -106,7 +106,7 @@ decreasing order of error:
   separates pipeline error from population error, because it removes the
   population term entirely.
 
-This is the axis the campaigns move along. `first-light` sits at the
+This is the axis the campaigns move along. `calibration` sits at the
 user-calibrated end by construction, since it weighs every bean;
 `field-campaign` is an attempt on the self-calibrating position.
 

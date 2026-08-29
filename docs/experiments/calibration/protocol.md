@@ -1,4 +1,4 @@
-# Protocol — first light
+# Protocol — calibration
 
 The sheet carried to the bench and filled in as the run proceeds. It says what
 to do and how to know it worked. Why it is shaped this way is in `bench.md`,

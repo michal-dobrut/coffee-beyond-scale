@@ -175,24 +175,40 @@ the JPEG, whose per-region tone mapping is the reason for the exclusion.
 
 White balance is recorded as `AsShotWhiteXY`, the chromaticity of the estimated
 illuminant, where the specification's more usual choice is `AsShotNeutral`.
-A reader expecting the latter finds nothing.
+A reader expecting the latter finds nothing, and so does LibRaw: it returns
+as-shot multipliers of `[0, 1, 0, 0]` and a zeroed camera-to-XYZ matrix. Code
+that asks for the camera white balance is quietly given something else. The
+sheet is a known reflectance in every frame, so normalising against it is both
+the way out and the better measurement.
+
+A capture leaves three different pixel rectangles, not two: the raw plane is
+8156 by 6140, the DNG's own default crop is 8140 by 6124, and the JPEG is 8160
+by 6144. Which plane a position was measured in has to travel with it.
 
 ## Geometry that follows
 
 For a board of width `board_mm` filling the frame's long side, working distance
-follows from the equivalent focal length alone:
+follows from the actual focal length and the long side of the sensor:
 
 ```
-distance_mm = board_mm * f_equiv_mm / 36
+distance_mm = board_mm * f_actual_mm / sensor_long_mm
 px_per_mm   = pixels_long_side / board_mm
 ```
 
+Dividing the equivalent focal length by 36 instead is the same statement only
+for a 3:2 sensor, since 36 mm is the long side of a 35 mm frame while the
+equivalence itself is by diagonal. Both cameras here are 4:3, where the two
+differ by 4%.
+
 | board | camera | `distance_mm` | `px_per_mm` |
 | --- | --- | --- | --- |
-| A4, 297 mm | main | 201 | 27.5 |
-| A4, 297 mm | tele | 932 | 26.9 |
-| 150 mm | main | 102 | 54.4 |
-| 150 mm | tele | 471 | 53.3 |
+| A4, 297 mm | main | 209 | 27.5 |
+| A4, 297 mm | tele | 902 `[?]` | 26.9 |
+| 150 mm | main | 106 | 54.4 |
+| 150 mm | tele | 455 `[?]` | 53.3 |
+
+The telephoto rows are derived through its actual focal length and so inherit
+that figure's uncertainty; the main camera's are not.
 
 Two of these are impractical. The main camera on a 150 mm board sits at its
 minimum focus distance with no margin, and its depth of field there is smaller
@@ -279,7 +295,11 @@ and it feeds every area estimate.
   its verification interval.
 - `[measure]` The balance's actual serial settings.
 - `[measure]` Whether raw capture is available from the telephoto.
-- `[measure]` Real resolution of both cameras by slanted edge.
+- `[measure]` Real resolution of both cameras by slanted edge. The edge of the
+  sheet is not a usable target for it: the sheet casts a shadow onto the
+  surface below, which widens the measured edge by an amount that varies from
+  edge to edge within one frame. A printed target clear of the substrate is
+  needed.
 - `[measure]` The telephoto's equivalent focal length, by calibration against
   the board, which settles the 113/128 mm disagreement and its derived actual
   focal length with it. The main camera's is fixed to a rounding by its own

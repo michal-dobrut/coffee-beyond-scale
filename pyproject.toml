@@ -8,7 +8,18 @@ dependencies = [
     "opencv-python-headless",
     "scikit-image",
     "pandas",
+    "rawpy>=0.27.0",
+    "pyyaml>=6.0.3",
 ]
+
+# Corner annotation is the one stage a person drives by hand, and the only
+# one that draws. Keeping its window out of the runtime dependencies is what
+# lets the measuring stages run on a machine with no display.
+[project.optional-dependencies]
+annotate = ["matplotlib"]
+
+[project.scripts]
+beanometer = "beanometer.cli:main"
 
 # Tools needed to develop the project but not to use it. `uv sync` installs
 # these by default; `pip install beanometer` would not.

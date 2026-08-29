@@ -17,9 +17,17 @@ recompress and strip EXIF, and the focal length does not come back.
 Photographs, balance logs and trained weights are not. A manifest naming the
 sessions is, and the files it names are fetched separately.
 
-A session leaves two records. The filled protocol sheet is the one a person
+A session leaves three records. The filled protocol sheet is the one a person
 reads, and it carries the conditions and the anomalies that no instrument
-logged. The manifest is the one the pipeline reads.
+logged. The manifest is the one the pipeline reads. The third is the corners
+of the substrate in each frame, placed by hand.
+
+Corners are committed because they are the only part of a session that cannot
+be regenerated from the photographs: they are a judgement about where the
+substrate is, and the detector that proposes them is one of the things under
+test. Proposed corners are kept in their own file and are not committed, so
+that a machine's guess can be measured against a person's placement rather
+than quietly standing in for it.
 
 ## Synthetic scenes are derived, not recorded
 

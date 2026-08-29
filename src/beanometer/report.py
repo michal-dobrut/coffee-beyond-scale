@@ -108,7 +108,7 @@ def print_corner_summary(session: Session, *, name: str = FILE_NAME) -> None:
         )
 
     aspects = np.array([row["aspect"] for row in rows])
-    residuals = np.array([row["residual_px"] for row in rows])
+    residual_px = np.array([row["residual_px"] for row in rows])
     print()
     print(
         f"aspect against {aspect_target:.4f}: median {np.median(aspects):.4f}, "
@@ -116,9 +116,9 @@ def print_corner_summary(session: Session, *, name: str = FILE_NAME) -> None:
         f"worst {100 * np.max(np.abs(aspects - aspect_target)) / aspect_target:.2f}%"
     )
     print(
-        f"reprojection residual: median {np.median(residuals):.1f} px, "
-        f"worst {residuals.max():.1f} px, putting that frame's worst corner "
-        f"{3 * residuals.max():.0f} to {10 * residuals.max():.0f} px out"
+        f"reprojection residual: median {np.median(residual_px):.1f} px, "
+        f"worst {residual_px.max():.1f} px, putting that frame's worst corner "
+        f"{3 * residual_px.max():.0f} to {10 * residual_px.max():.0f} px out"
     )
     camera = camera_for(session.record)
     print(
@@ -195,9 +195,11 @@ def print_results(session: Session, measurements_path: Path) -> None:
 
 def _print_observables(measurements: list[FrameMeasurement]) -> None:
     header = (
-        f"\n{'frame':<8}{'stage':<16}{'g':>6}{'area mm2':>10}{'cover%':>8}"
-        f"{'beans':>7}{'blobs':>7}{'unres mm2':>11}{'bean mm2':>10}{'rim mm2':>9}"
+        f"{'frame':<8}{'stage':<16}{'g':>6}{'area mm2':>10}{'cover%':>8}"
+        f"{'beans':>7}{'blobs':>7}{'unres mm2':>11}{'bean mm2':>10}"
+        f"{'rim mm2':>9}{'resid px':>10}{'tilt':>7}"
     )
+    print()
     print(header)
     print("-" * len(header))
     for measurement in measurements:
@@ -209,45 +211,92 @@ def _print_observables(measurements: list[FrameMeasurement]) -> None:
             f"{measurement.unresolved_area_mm2:>11.0f}"
             f"{measurement.median_bean_area_mm2:>10.1f}"
             f"{measurement.coverage_in_margin_mm2:>9.0f}"
+            f"{measurement.residual_px:>10.1f}{measurement.tilt_deg:>7.1f}"
         )
 
 
 def _print_pathway(measurements: list[FrameMeasurement], pathway: Pathway) -> None:
     calibration = fit(measurements, pathway)
+    print()
+    print(f"=== {pathway.name}: {pathway.description} ===")
     print(
-        f"\n=== {pathway.name} — {pathway.description} ===\n"
         f"one constant, fitted on {len(calibration.frames)} frames whose mass the "
-        f"balance read:\n"
+        f"balance read:"
+    )
+    print(
         f"  {calibration.grams_per_unit:.6g} g per {pathway.unit}, "
         f"in-sample scatter {100 * calibration.scatter_rel:.2f}%"
     )
 
     rows = residuals(measurements, calibration)
+    fitted_on = set(calibration.frames)
     scored = [
-        abs(relative) for _, _, relative in rows if not np.isnan(relative)
+        abs(relative)
+        for measurement, _, relative in rows
+        if measurement.stem in fitted_on
     ]
     print(
-        f"  relative error against the balance: median {100 * np.median(scored):.2f}%, "
+        f"  relative error on those frames: median {100 * np.median(scored):.2f}%, "
         f"95th percentile {100 * np.percentile(scored, 95):.2f}%"
     )
+    _print_checks(rows, fitted_on)
 
-    print(f"\n  {'frame':<8}{'stage':<16}{'balance g':>11}{'read g':>9}{'error':>9}")
+    print()
+    print(f"  {'frame':<8}{'stage':<16}{'balance g':>11}{'read g':>9}{'error':>9}")
     for measurement, estimate, relative in rows:
         error = "-" if np.isnan(relative) else f"{100 * relative:+.1f}%"
+        mark = " " if measurement.stem in fitted_on else " *"
         print(
             f"  {measurement.stem[-6:]:<8}{measurement.stage:<16}"
-            f"{measurement.mass_g:>11.1f}{estimate.mass_g:>9.2f}{error:>9}"
+            f"{measurement.mass_g:>11.1f}{estimate.mass_g:>9.2f}{error:>9}{mark}"
         )
+    print("  * outside the fit: the balance did not read that mass")
 
-    print(f"\n  one sheet, several photographs of it:")
+    print()
+    print("  one sheet photographed several times, and one dose against another:")
     print(
         f"  {'stage':<16}{'g':>6}{'frames':>8}{'mean':>12}{'sd':>10}{'spread':>9}"
+        f"{'own constant':>15}{'against fit':>13}"
     )
     for entry in spread_by_stage(measurements, pathway):
         spread = (
             "-" if np.isnan(entry.spread_rel) else f"{100 * entry.spread_rel:.2f}%"
         )
+        if entry.mass_g > 0.0 and entry.mean > 0.0:
+            own = entry.mass_g / entry.mean
+            drift = f"{100 * (own / calibration.grams_per_unit - 1):+.1f}%"
+            own_text = f"{own:.6g}"
+        else:
+            drift, own_text = "-", "-"
         print(
             f"  {entry.stage:<16}{entry.mass_g:>6.1f}{entry.frames:>8}"
             f"{entry.mean:>12.1f}{entry.sd:>10.1f}{spread:>9}"
+            f"{own_text:>15}{drift:>13}"
         )
+    print(
+        "  The spread column is what moves between photographs of a sheet nothing"
+    )
+    print(
+        "  happened to. The last column is what a constant fitted to one dose does"
+    )
+    print("  when it meets another, which no amount of calibrating removes.")
+
+
+def _print_checks(rows, fitted_on: set[str]) -> None:
+    """What a pathway reads where the answer is known without a balance."""
+    empty = [
+        estimate.mass_g for measurement, estimate, _ in rows if measurement.mass_g == 0.0
+    ]
+    if empty:
+        print(
+            f"  on {len(empty)} frames of the bare sheet it reads "
+            f"{min(empty):.3f} to {max(empty):.3f} g, which is its floor"
+        )
+    for measurement, estimate, _ in rows:
+        if measurement.mass_g > 0.0 and measurement.stem not in fitted_on:
+            print(
+                f"  on {measurement.stem[-6:]} ({measurement.stage}, "
+                f"{measurement.mass_g:g} g by eye) it reads {estimate.mass_g:.2f} g"
+            )
+
+

@@ -1,0 +1,99 @@
+# Generated from session.md; session.md is the authored record.
+session: run-zero
+captured: 2026-08-29
+purpose: shakedown of the pipeline end to end, not a calibration
+
+camera:
+  body: Google Pixel 10 Pro
+  lens: main
+  capture: raw+jpeg          # .RAW-02.ORIGINAL.dng + .RAW-01.jpg per shot
+  hdr_plus: true
+  process_from: dng          # the two formats do not share a pixel frame
+
+substrate:
+  kind: a4-paper
+  width_mm: 210.0
+  height_mm: 297.0
+
+beans:
+  label: "Brazylia Monte Carmelo"
+  roastery: "Kafar"
+  origin: brazil
+  variety: "arabica; mundo nuovo, paraiso"
+  process: natural
+  roast_level: espresso
+  roast_date: 2026-08-10
+
+balance:
+  kind: kitchen scale
+  resolution_g: 1.0
+  check: "5 PLN and 2 PLN coins, 6 g to 92 g in several steps; under 1 g deviation"
+
+handling:
+  weighed_in: cup
+  container_g: 62.0
+  spread_by: hand
+
+lighting:
+  kind: indirect diffuse daylight
+  source: "roof window, semi-clouded sky"
+  indoor: true
+
+stages:
+  - name: bare-substrate
+    mass_g: 0.0
+    mass_source: definition
+    frames:
+      - PXL_20260829_085345138
+      - PXL_20260829_085347000
+      - PXL_20260829_085355016
+      - PXL_20260829_085357115
+      - PXL_20260829_085358533
+      - PXL_20260829_085359674
+
+  - name: dense-fill
+    mass_g: 50.0
+    mass_source: balance
+    note: "beans touching; close to what fits on A4"
+    frames:
+      - PXL_20260829_085522342
+      - PXL_20260829_085525015
+      - PXL_20260829_085527457
+      - PXL_20260829_085531314
+      - PXL_20260829_085541156
+      - PXL_20260829_085543143
+
+  - name: residue
+    mass_g: 0.1
+    mass_source: estimate
+    note: "swept remains; below what a 1 g scale can resolve, so judged by eye"
+    frames:
+      - PXL_20260829_085610908
+      - PXL_20260829_085612963
+
+  - name: sparse-scatter
+    mass_g: 16.0
+    mass_source: balance
+    note: "one arrangement, shot twice; white balance auto, then locked"
+    frames:
+      - PXL_20260829_085837800
+      - PXL_20260829_085908188
+      - PXL_20260829_085922656
+      - PXL_20260829_085928039
+      - PXL_20260829_085932719
+      - PXL_20260829_085935784
+
+  - name: sparse-settled
+    mass_g: 16.0
+    mass_source: balance
+    note: "re-poured and shaken so half-flat beans rest on their flats"
+    frames:
+      - PXL_20260829_090122460
+      - PXL_20260829_090123608
+      - PXL_20260829_090152063
+      - PXL_20260829_090153984
+      - PXL_20260829_090155668
+      - PXL_20260829_090209813
+      - PXL_20260829_090214074
+      - PXL_20260829_090215419
+      - PXL_20260829_090217044

@@ -11,8 +11,8 @@ uncertainty. Python 3.12, uv, `src/` layout.
   session logs, plans, progress, dead ends. `/dump` writes to it, and
   `notes/plan.md` holds the schedule and learning plan.
 
-**Invariant: nothing a reader consumes — README, DECISIONS, `docs/`, source —
-ever mentions `notes/`.** Tooling config is exempt; it is not part of the story
+**Invariant: nothing a reader consumes — README, `docs/`, source — ever
+mentions `notes/`.** Tooling config is exempt; it is not part of the story
 the repo tells. Such a file may cite another tracked file, by concept — never
 by section number, which rots on the next edit to that document.
 
@@ -43,22 +43,22 @@ are rather than numbered, because their order is a dependency, and dependencies
 get reordered.
 
 Dates are narrower still. One that records when something happened is a fact
-and keeps: a decision entry, a roast date, a session. One that stands in for
+and keeps: a roast date, a session, a report. One that stands in for
 the current state of something rots as soon as the state moves — write the
 state instead.
 
-## DECISIONS.md
+## Decisions live in the document they affect
 
-Tracked, append-only, newest last. `/decision` drafts an entry. One per decision:
+There is no decision log. A choice and its reason belong in the document that
+describes the thing chosen — a campaign's bench, `method.md`, `records.md`,
+this file — written as what is true now, not as what was settled when.
 
-    ### YYYY-MM-DD — short title
-    **Decision:** what was chosen.
-    **Why:** the reason, in one or two sentences.
-    **Rejected:** the alternatives, each with the reason it lost.
-    **Revisit if:** the measurement or event that would reopen this.
+Keep a reason only where a reader needs it to understand the arrangement in
+front of them, and keep it to a sentence. The alternatives that lost are
+deliberation; they belong in the session log.
 
-Write it when the decision is made, not later. Conclusions and the alternatives
-that lost — enough to defend the choice, not enough to relive it.
+When something is decided again, edit the document. Do not annotate it with
+what it used to say — the history holds that.
 
 ## Commits
 
@@ -70,16 +70,16 @@ a unit of time:
     <why, wrapped at 72 columns. The diff already shows what.>
 
 - Types: `feat`, `fix`, `docs`, `test`, `refactor`, `chore`.
-- Scope: lowercase kebab-case component (`geometry`, `naive`, `decisions`).
+- Scope: lowercase kebab-case component (`geometry`, `naive`, `records`).
   Omit it rather than invent one.
 - Subject: imperative mood — it completes "applying this commit will ___".
   Lowercase, no trailing period, under ~50 characters.
 - Never `wip`, `update`, `fixes`, or a bare filename.
-- A commit that changes behaviour and a commit that records the decision behind
-  it are two commits.
-- Source changes land one per commit. Documentation and `DECISIONS.md` edits
-  may be grouped when they land together, so the log is not filled with
-  four-line diffs — the rule above still holds across that boundary.
+- A commit that changes behaviour and a commit that writes down why are two
+  commits.
+- Source changes land one per commit. Documentation edits may be grouped when
+  they land together, so the log is not filled with four-line diffs — the rule
+  above still holds across that boundary.
 
 ## Writing style in tracked files
 

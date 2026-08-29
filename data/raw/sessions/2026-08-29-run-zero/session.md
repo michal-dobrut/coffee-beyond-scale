@@ -3,7 +3,7 @@ in order of shooting
 
 scale: kitchen scale, resolution = 1 g
 verified using 5 PLN and 2 PLN coins from 6g to 92g in several steps: <1g deviation
-weighted in a cup (cup is 62g), spreaded on paper by hand
+weighted in a cup (cup is 67g), spreaded on paper by hand
 lighting: indoor, indirect diffuse light from semi-clouded sky via roof window
 coffee: espresso-roast, "Brazylia Monte Carmelo", variety arabica "mundo nuovo, paraiso", preparation "natural", roasted 2026-08-10, roastery: "Kafar"
 

@@ -31,7 +31,7 @@ balance:
 
 handling:
   weighed_in: cup
-  container_g: 62.0
+  container_g: 67.0
   spread_by: hand
 
 lighting:

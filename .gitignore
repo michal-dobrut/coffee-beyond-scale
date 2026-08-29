@@ -20,11 +20,15 @@ env/
 .ipynb_checkpoints/
 
 # --- Project data & artifacts ---
-# Photos and trained weights are not committed; sessions are tracked via the
-# manifest instead. See the storage section of docs/data.md. Ignoring the
-# contents of data/ rather than the directory is what lets the manifest be
-# re-included below -- a negation cannot reach inside an excluded directory.
-data/*
+# Photographs and trained weights are not committed. The records that sit
+# beside them are: the sheet a person writes and the YAML the pipeline reads,
+# as docs/records.md sets out. Re-including directories is what lets those
+# negations reach any depth -- a negation cannot reach inside an excluded
+# directory.
+data/**
+!data/**/
+!data/**/session.md
+!data/**/session.yaml
 !data/manifest.csv
 models/
 

@@ -1,0 +1,48 @@
+# Generated from session.md; session.md is the authored record.
+session: flash
+captured: 2026-08-29
+purpose: probe of the integrated flash against the diffuse daylight of run-zero
+
+camera:
+  body: Google Pixel 10 Pro
+  lens: main
+  capture: raw                # .RAW-02.ORIGINAL.dng only, no jpeg sidecar
+  process_from: dng
+
+substrate:
+  kind: a4-paper
+  width_mm: 210.0
+  height_mm: 297.0
+
+beans:
+  label: "Brazylia Monte Carmelo"
+  roastery: "Kafar"
+  origin: brazil
+  variety: "arabica; mundo nuovo, paraiso"
+  process: natural
+  roast_level: espresso
+  roast_date: 2026-08-10
+
+balance:
+  kind: kitchen scale
+  resolution_g: 1.0
+
+handling:
+  weighed_in: cup
+  container_g: 67.0
+  spread_by: hand
+
+lighting:
+  kind: integrated flash
+  source: "phone flash, forced on; EXIF flash = 9"
+  indoor: true
+
+stages:
+  - name: sparse
+    mass_g: 16.0
+    mass_source: balance
+    note: "one arrangement, shot at nadir and at an angle; the two frames carry
+      different amounts of ambient behind the flash"
+    frames:
+      - PXL_20260829_155331559
+      - PXL_20260829_155401735

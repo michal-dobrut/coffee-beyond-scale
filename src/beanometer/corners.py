@@ -110,9 +110,7 @@ def detect_sheet_corners(
     is taken. Returns (4, 2), (x, y), in the coordinates of `rgb`, or None
     when no plausible quadrilateral is found.
 
-    The detector is a proposal, not a measurement. A polished table returns a
-    specular image of the sheet that is bright and only weakly coloured, and
-    nothing here distinguishes that reflection from the sheet itself.
+    The detector is a proposal, not a measurement.
     """
     height, width = rgb.shape[:2]
     scale = work_px / max(height, width)
@@ -147,7 +145,113 @@ def detect_sheet_corners(
     quad = _quadrilateral_from_contour(contour)
     if quad is None:
         return None
-    return order_corners(quad / scale)
+    return refine_sheet_corners(paperness_map(rgb), quad / scale)
+
+
+def paperness_map(rgb: np.ndarray) -> np.ndarray:
+    """How much each pixel looks like the sheet rather than the table.
+
+    `rgb` is (h, w, 3) uint8; the result is (h, w) float32, larger where a
+    pixel is bright and unsaturated. The brown table is dark and saturated and
+    scores low; a bean on the sheet also scores low, which is why the outline
+    is taken from a filled region rather than from this directly.
+    """
+    lab = cv2.cvtColor(rgb, cv2.COLOR_RGB2LAB).astype(np.float32)
+    lightness = lab[..., 0] * (100.0 / 255.0)
+    chroma = np.hypot(lab[..., 1] - 128.0, lab[..., 2] - 128.0)
+    return lightness - 2.0 * chroma
+
+
+def refine_sheet_corners(
+    paperness: np.ndarray,
+    seed_px: np.ndarray,
+    *,
+    search_px: float = 220.0,
+    samples_per_edge: int = 64,
+) -> np.ndarray | None:
+    """Pull a rough quadrilateral onto the edges of the sheet.
+
+    `paperness` is (h, w) float32 as `paperness_map` returns it, and `seed_px`
+    is (4, 2), (x, y), a quadrilateral overlapping the sheet. Each edge is
+    re-found by walking outward from the middle of the seed along the edge
+    normal and taking the first place the sheet stops, then fitting a line to
+    what those walks found. Returns (4, 2) in the coordinates of `paperness`.
+
+    Walking outward is what separates the sheet from its own reflection. A
+    polished table returns a specular image of the sheet that is bright and
+    barely coloured, so a threshold cannot tell the two apart — but the
+    reflection is always further out than the edge that casts it, and the
+    first drop encountered is the sheet.
+    """
+    height, width = paperness.shape
+    centre = np.asarray(seed_px, dtype=np.float64).mean(axis=0)
+    corners = order_corners(seed_px)
+    lines = []
+    for index in range(4):
+        start, end = corners[index], corners[(index + 1) % 4]
+        along = end - start
+        length = float(np.linalg.norm(along))
+        if length < 1.0:
+            return None
+        along = along / length
+        outward = np.array([-along[1], along[0]])
+        if float(np.dot(outward, 0.5 * (start + end) - centre)) < 0.0:
+            outward = -outward
+
+        found = []
+        for fraction in np.linspace(0.08, 0.92, samples_per_edge):
+            anchor = start + fraction * length * along
+            crossing = _first_drop(paperness, anchor, outward, search_px, width, height)
+            if crossing is not None:
+                found.append(anchor + crossing * outward)
+        if len(found) < samples_per_edge // 4:
+            return None
+        fitted = cv2.fitLine(
+            np.asarray(found, dtype=np.float32), cv2.DIST_HUBER, 0, 0.01, 0.01
+        ).ravel()
+        lines.append((np.array([fitted[2], fitted[3]]), np.array([fitted[0], fitted[1]])))
+
+    refined = []
+    for index in range(4):
+        crossing = _intersect(*lines[index - 1], *lines[index])
+        if crossing is None:
+            return None
+        refined.append(crossing)
+    return order_corners(np.asarray(refined))
+
+
+def _first_drop(
+    paperness: np.ndarray,
+    anchor_px: np.ndarray,
+    outward: np.ndarray,
+    search_px: float,
+    width: int,
+    height: int,
+) -> float | None:
+    """Where, along `outward` from `anchor_px`, the sheet first ends.
+
+    Returns the signed offset in pixels of the half-height crossing, or None
+    when the profile never establishes a sheet to leave.
+    """
+    steps = int(2 * search_px)
+    offsets = np.linspace(-search_px, search_px, steps)
+    points = anchor_px[None, :] + offsets[:, None] * outward[None, :]
+    columns = np.clip(np.round(points[:, 0]).astype(int), 0, width - 1)
+    rows = np.clip(np.round(points[:, 1]).astype(int), 0, height - 1)
+    profile = paperness[rows, columns]
+
+    inside = float(np.median(profile[: steps // 8]))
+    outside = float(np.median(profile[-steps // 8 :]))
+    if inside - outside < 8.0:
+        return None
+    level = 0.5 * (inside + outside)
+    below = np.flatnonzero(profile < level)
+    if below.size == 0 or below[0] == 0:
+        return None
+    index = int(below[0])
+    span = profile[index - 1] - profile[index]
+    within = 0.0 if span <= 0 else (profile[index - 1] - level) / span
+    return float(offsets[index - 1] + within * (offsets[index] - offsets[index - 1]))
 
 
 def _quadrilateral_from_contour(contour: np.ndarray) -> np.ndarray | None:
